@@ -1,0 +1,98 @@
+#include <ESP8266WiFi.h>
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+#include <UrlEncode.h>
+#include <ESP8266WebServer.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
+// Wi‑Fi credentials
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+// CallMeBot credentials (phoneNumber must include '+')
+String phoneNumber = "+48123123123";
+
+String apiKey = "Your_Api_Key_XX68XXX";
+
+// IR barrier pin
+const int IR_PIN = D1;
+bool previousState = HIGH;
+unsigned long breakCount = 0;
+String lastEventTime = "Never";
+
+// Time client
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 2 * 3600, 60000);
+
+// Simple web server
+ESP8266WebServer server(80);
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(IR_PIN, INPUT_PULLUP);
+
+  // Connect Wi‑Fi
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500); Serial.print(".");
+  }
+  Serial.println("\nConnected. IP: " + WiFi.localIP().toString());
+
+  // Start NTP and web server
+  timeClient.begin();
+  server.on("/", handleRoot);
+  server.begin();
+}
+
+void loop() {
+  timeClient.update();
+  server.handleClient();
+
+  bool state = digitalRead(IR_PIN);
+  if (state != previousState) {
+    previousState = state;
+    if (state == LOW) {
+      breakCount++;
+      lastEventTime = timeClient.getFormattedTime();
+      Serial.println("🚨 Barrier broken!");
+      sendWhatsApp("Barrier broken! Tokio-the-Cat is here ! Count: " + String(breakCount) + " Time: " + lastEventTime);
+    } else {
+      Serial.println("✔ Barrier clear.");
+    }
+  }
+  delay(100);
+}
+
+void handleRoot() {
+  String html = "<html><body>";
+  html += "<h1>IR Barrier Monitor</h1>";
+  html += "<p><strong>Break Count:</strong> " + String(breakCount) + "</p>";
+  html += "<p><strong>Last Event:</strong> " + lastEventTime + "</p>";
+  html += "<p><em>IP: " + WiFi.localIP().toString() + "</em></p>";
+  html += "</body></html>";
+  server.send(200, "text/html", html);
+}
+
+void sendWhatsApp(String message) {
+  String encoded = urlEncode(message);
+  String url = "http://api.callmebot.com/whatsapp.php?phone=" + phoneNumber +
+               "&apikey=" + apiKey +
+               "&text=" + encoded;
+
+  Serial.println("POST to: " + url);
+
+  WiFiClient client;
+  HTTPClient http;
+  http.begin(client, url);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  int response = http.POST(url);
+  if (response == 200) {
+    Serial.println("✅ WhatsApp message sent");
+  } else {
+    Serial.println("❌ Error sending. Code: " + String(response));
+  }
+  http.end();
+}
+
