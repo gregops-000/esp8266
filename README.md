@@ -73,14 +73,13 @@ Edit
 const char* ssid = "YOUR_WIFI_SSID";
 const char* password = "YOUR_WIFI_PASSWORD";
 Select board: LOLIN(WEMOS) D1 R2 & mini
-
-Upload to your board.
-
 Open Serial Monitor at 115200 baud.
+Upload to your board/ file: esp8266-Tokio-IR-Barrier
 
 Access the web interface and test alerts.
 
-🧪 Example Serial Output
+🧪 Example Serial Output:
+
 WiFi connected. IP: 192.168.2.219
 Web server started.
 🔴 Barrier Broken! Sending WhatsApp...
