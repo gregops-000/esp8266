@@ -48,17 +48,17 @@ GND → GND
 📦 Libraries Used
 Install via Arduino Library Manager:
 
-ESP8266WiFi
+- 🌐 ESP8266WiFi
 
-ESP8266HTTPClient
+- 🌐 ESP8266HTTPClient
 
-ESP8266WebServer
+- 🌐 ESP8266WebServer
 
-NTPClient
+- 🌐 NTPClient
 
-WiFiUdp
+- 🌐 WiFiUdp
 
-UrlEncode by Masayuki Sugahara
+- 🌐 UrlEncode by Masayuki Sugahara
 
 🚀 Getting Started
 Clone or download this repository.
@@ -81,9 +81,6 @@ Open Serial Monitor at 115200 baud.
 Access the web interface and test alerts.
 
 🧪 Example Serial Output
-arduino
-Copy
-Edit
 WiFi connected. IP: 192.168.2.219
 Web server started.
 🔴 Barrier Broken! Sending WhatsApp...
