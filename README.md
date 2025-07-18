@@ -62,16 +62,11 @@ Install via Arduino Library Manager:
 
 🚀 Getting Started
 Clone or download this repository.
-
-Open the .ino file in Arduino IDE.
+file: esp8266-Tokio-IR-Barrier
 
 Replace Wi-Fi and CallMeBot credentials:
-
-cpp
-Copy
-Edit
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
+    const char* ssid = "YOUR_WIFI_SSID";
+    const char* password = "YOUR_WIFI_PASSWORD";
 Select board: LOLIN(WEMOS) D1 R2 & mini
 Open Serial Monitor at 115200 baud.
 Upload to your board/ file: esp8266-Tokio-IR-Barrier
